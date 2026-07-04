@@ -32,7 +32,7 @@ body {
   overflow-x: hidden;
 }
 
-/* Fondo sutil para dar profundidad sin saturar */
+
 body::before {
   content: "";
   position: fixed;
@@ -74,9 +74,7 @@ textarea {
   border: 0;
 }
 
-/* =========================================================
-   Layout general
-========================================================= */
+
 .container {
   width: min(100% - 2rem, var(--max-width));
   margin: 0 auto;
@@ -246,7 +244,6 @@ textarea {
 .hero-card,
 .service-card,
 .project-card,
-.tech-card,
 .contact-card,
 .about-card {
   background: var(--surface);
@@ -315,8 +312,7 @@ textarea {
 }
 
 .service-grid,
-.project-grid,
-.tech-grid {
+.project-grid {
   display: grid;
   gap: 1.15rem;
 }
@@ -331,8 +327,7 @@ textarea {
 }
 
 .service-card:hover,
-.project-card:hover,
-.tech-card:hover {
+.project-card:hover {
   transform: translateY(-2px);
   border-color: var(--accent);
 }
@@ -371,15 +366,17 @@ textarea {
   border-radius: 28px;
   box-shadow: 0 18px 38px rgba(16, 16, 16, 0.05);
   overflow: hidden;
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 1.3rem;
   padding: 1.4rem;
 }
 
 .project-card-body {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 1.1rem;
-  width: 100%;
+  flex: 1;
 }
 
 .project-card-header {
@@ -406,26 +403,23 @@ textarea {
   font-size: 1rem;
   line-height: 1.8;
   max-width: 54rem;
+  flex: 1;
 }
 
 .project-meta {
-  display: grid;
-  gap: 1rem;
+  display: none;
 }
 
 .project-meta div {
-  display: grid;
-  gap: 0.3rem;
+  display: none;
 }
 
 .project-meta strong {
-  font-size: 0.95rem;
+  display: none;
 }
 
 .project-meta span {
-  color: var(--muted);
-  font-size: 0.96rem;
-  line-height: 1.7;
+  display: none;
 }
 
 .project-media {
@@ -462,45 +456,6 @@ textarea {
 
 .project-card:not(:last-child) {
   margin-bottom: 1.5rem;
-}
-
-.tag-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.55rem;
-  margin-bottom: 1rem;
-}
-
-.tag {
-  padding: 0.4rem 0.7rem;
-  border-radius: 999px;
-  background: var(--surface-2);
-  color: var(--muted);
-  font-size: 0.82rem;
-  border: 1px solid var(--line);
-}
-
-.tech-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.8rem 1rem;
-}
-
-.tech-list li {
-  padding: 0.7rem 0.85rem;
-  border-bottom: 1px solid var(--line);
-  color: var(--text);
-  font-weight: 600;
-  font-size: 0.95rem;
-}
-
-.tech-list li::before {
-  content: "•";
-  color: var(--accent);
-  margin-right: 0.6rem;
 }
 
 .contact-grid {
@@ -578,28 +533,14 @@ textarea {
   max-width: 54rem;
 }
 
-.project-meta {
-  display: grid;
-  gap: 1rem;
-}
-
-.project-meta div {
-  display: grid;
-  gap: 0.3rem;
-}
-
-.project-meta strong {
-  font-size: 0.95rem;
-}
-
-.project-meta span {
-  color: var(--muted);
-  font-size: 0.96rem;
-  line-height: 1.7;
-}
-
 .project-media-wrapper {
   position: relative;
+}
+
+@media (max-width: 760px) {
+  .hero-card {
+    display: none;
+  }
 }
 
 .project-image-nav {
@@ -768,10 +709,6 @@ textarea {
   .service-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-
-  .tech-list {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
 }
 
 @media (max-width: 700px) {
@@ -790,10 +727,6 @@ textarea {
 
   .service-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .tech-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .section {
@@ -923,6 +856,10 @@ textarea {
 
   .hero-meta {
     grid-template-columns: 1fr;
+  }
+
+  .hero-card {
+    display: none;
   }
 
   .hero-card,
