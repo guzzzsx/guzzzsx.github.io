@@ -130,7 +130,14 @@ projectMediaWrappers.forEach((wrapper) => {
 
   if (!track || !prevButton || !nextButton) return;
 
-  const step = () => Math.min(track.clientWidth * 0.85, 360);
+  const firstImage = track.querySelector('img');
+  const gap = parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap || 0);
+  const step = () => {
+    if (firstImage) {
+      return firstImage.getBoundingClientRect().width + gap;
+    }
+    return track.clientWidth;
+  };
 
   prevButton.addEventListener('click', () => {
     track.scrollBy({ left: -step(), behavior: 'smooth' });

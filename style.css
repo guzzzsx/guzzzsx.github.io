@@ -480,33 +480,27 @@ textarea {
   border: 1px solid var(--line);
 }
 
-.tech-grid {
+.tech-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.8rem 1rem;
 }
 
-.tech-card {
-  padding: 1rem;
-  text-align: center;
-  transition: transform 0.25s ease, border-color 0.25s ease;
-}
-
-.tech-icon {
-  width: 48px;
-  height: 48px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 16px;
-  background: var(--accent-soft);
-  color: var(--accent);
-  margin-bottom: 0.75rem;
-  font-weight: 700;
+.tech-list li {
+  padding: 0.7rem 0.85rem;
+  border-bottom: 1px solid var(--line);
+  color: var(--text);
+  font-weight: 600;
   font-size: 0.95rem;
 }
 
-.tech-card h3 {
-  margin: 0;
-  font-size: 1rem;
+.tech-list li::before {
+  content: "•";
+  color: var(--accent);
+  margin-right: 0.6rem;
 }
 
 .contact-grid {
@@ -775,7 +769,7 @@ textarea {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .tech-grid {
+  .tech-list {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
@@ -790,10 +784,16 @@ textarea {
   }
 
   .hero-meta,
-  .form-row,
-  .service-grid,
-  .tech-grid {
+  .form-row {
     grid-template-columns: 1fr;
+  }
+
+  .service-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .tech-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .section {
@@ -946,9 +946,27 @@ textarea {
     padding: 1.2rem;
   }
 
-  .service-grid,
-  .tech-grid {
+  .service-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.6rem;
+  }
+
+  .service-card {
+    padding: 0.7rem;
+  }
+
+  .service-card h3 {
+    font-size: 0.9rem;
+  }
+
+  .service-card p {
+    font-size: 0.78rem;
+    line-height: 1.45;
+  }
+
+  .tech-list {
     grid-template-columns: 1fr;
+    gap: 0.6rem;
   }
 
   .project-card {
@@ -970,21 +988,25 @@ textarea {
   }
 
   .project-media {
-    display: grid;
+    display: flex;
     gap: 0.75rem;
-    overflow: visible;
-    padding-bottom: 0;
+    overflow-x: auto;
+    padding: 0.2rem 0.1rem 0.6rem;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
   }
 
   .project-media img {
     width: 100%;
     max-width: 100%;
+    flex: 0 0 100%;
     aspect-ratio: 16 / 10;
     border-radius: 18px;
+    scroll-snap-align: start;
   }
 
   .project-image-nav {
-    display: none;
+    display: inline-flex;
   }
 
   .project-meta {
