@@ -431,7 +431,7 @@ textarea {
   -webkit-overflow-scrolling: touch;
 }
 
-.project-media img {
+.project-media img, .project-media video {
   width: min(360px, 100%);
   aspect-ratio: 4 / 3;
   flex: 0 0 auto;
