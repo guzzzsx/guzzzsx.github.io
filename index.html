@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AZUU - Generador de Notas de Servicio</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="script.js"></script>
+    <!-- Google Fonts: Permanent Marker & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Permanent+Marker&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2pdf.js for Direct PDF Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-street-black text-gray-100 min-h-screen font-sans flex flex-col justify-between pb-16 lg:pb-0">
+
+    <header class="no-print bg-street-dark border-b border-zinc-800 p-3 md:p-4 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-white rounded flex items-center justify-center p-1 font-bold text-black font-street text-sm">
+                    <img src="assets/image/logo.png" alt="Logo AZUU Tech Lab" class="w-full h-full object-contain">
+                </div>
+                <div>
+                    <h1 class="text-lg md:text-xl font-extrabold tracking-wider text-white flex items-center gap-2">
+                        AZUU <span class="text-[10px] md:text-xs px-2 py-0.5 bg-red-600 text-white rounded uppercase tracking-normal">Tech Lab</span>
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="flex items-center gap-2 w-full md:w-auto justify-end">
+                <button id="demoButton" title="Cargar datos de ejemplo" class="bg-zinc-800 hover:bg-zinc-700 active:scale-95 text-xs text-gray-200 px-3 py-2 rounded-lg border border-zinc-700 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i>
+                    <span class="hidden sm:inline">Demo</span>
+                </button>
+                <button id="clearButton" title="Limpiar formulario" class="bg-zinc-800 hover:bg-zinc-700 active:scale-95 text-xs text-red-400 px-3 py-2 rounded-lg border border-zinc-700 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-trash-can"></i>
+                    <span class="hidden sm:inline">Limpiar</span>
+                </button>
+                <button id="downloadButton" class="bg-red-600 hover:bg-red-700 active:scale-95 text-white font-bold text-xs px-4 py-2 rounded-lg transition flex items-center gap-2 shadow-lg shadow-red-600/20">
+                    <i class="fa-solid fa-file-pdf"></i> Descargar PDF
+                </button>
+                <button id="printButton" class="bg-white hover:bg-gray-200 active:scale-95 text-black font-bold text-xs px-4 py-2 rounded-lg transition flex items-center gap-2 shadow-lg shadow-white/10 hidden sm:flex">
+                    <i class="fa-solid fa-print"></i> Imprimir
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Tab Switcher (Visible only on mobile screens) -->
+    <div class="no-print lg:hidden bg-street-gray border-b border-zinc-800 p-2 sticky top-[61px] z-40">
+        <div class="grid grid-cols-2 gap-2 max-w-md mx-auto">
+            <button id="btnTabForm" class="py-2.5 px-4 rounded-lg text-xs font-bold transition flex items-center justify-center gap-2 bg-red-600 text-white shadow">
+                <i class="fa-solid fa-pen-to-square"></i> 1. Llenar Formulario
+            </button>
+            <button id="btnTabReceipt" class="py-2.5 px-4 rounded-lg text-xs font-bold transition flex items-center justify-center gap-2 bg-zinc-800 text-gray-400 hover:text-white">
+                <i class="fa-solid fa-receipt"></i> 2. Ver Recibo
+            </button>
+        </div>
+    </div>
+
+    <main class="max-w-7xl mx-auto w-full p-3 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 flex-grow">
+        
+        <!-- FORM PANEL -->
+        <section id="formContainer" class="no-print lg:col-span-5 bg-street-dark border border-zinc-800 rounded-xl p-4 md:p-5 shadow-xl space-y-5">
+            <div class="border-b border-zinc-800 pb-3 flex justify-between items-center">
+                <h2 class="text-base md:text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-red-500"></i>
+                    Datos de la Nota
+                </h2>
+                <span class="text-xs text-zinc-500">Auto-sincronizado</span>
+            </div>
+
+            <form id="noteForm" class="space-y-4">
+                
+                <!-- General Info -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-semibold text-gray-400 uppercase mb-1">Fecha</label>
+                        <input type="date" id="inputFecha" class="w-full bg-street-gray border border-zinc-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-red-500 transition">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold text-gray-400 uppercase mb-1">Folio / No.</label>
+                        <input type="text" id="inputFolio" placeholder="AZ-001" class="w-full bg-street-gray border border-zinc-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-red-500 transition">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-semibold text-gray-400 uppercase mb-1">Fecha de recepción</label>
+                        <input type="date" id="inputRecepcion" class="w-full bg-street-gray border border-zinc-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-red-500 transition">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold text-gray-400 uppercase mb-1">Fecha de entrega</label>
+                        <input type="date" id="inputEntrega" class="w-full bg-street-gray border border-zinc-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-red-500 transition">
+                    </div>
+                </div>
+
+                <!-- Client Info -->
+                <div class="bg-street-gray p-3 rounded-xl border border-zinc-800/80 space-y-3">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-red-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-user-gear"></i> Cliente
+                    </h3>
+                    <div>
+                        <label class="block text-[11px] text-gray-400 mb-1">Nombre completo</label>
+                        <input type="text" id="inputCliente" placeholder="Ej: Carlos Mendoza" class="w-full bg-street-dark border border-zinc-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-red-500 transition">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] text-gray-400 mb-1">Teléfono de contacto</label>
+                        <input type="tel" id="inputTelefono" placeholder="55 1234 5678" class="w-full bg-street-dark border border-zinc-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-red-500 transition">
+                    </div>
+                </div>
+
+                <!-- Equipment Info -->
+                <div class="bg-street-gray p-3 rounded-xl border border-zinc-800/80 space-y-3">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-red-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-laptop-medical"></i> Datos del Equipo
+                    </h3>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[11px] text-gray-400 mb-1">Tipo de equipo</label>
+                            <input type="text" id="inputTipo" placeholder="Laptop, Consola..." class="w-full bg-street-dark border border-zinc-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-red-500 transition">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-gray-400 mb-1">Marca</label>
+                            <input type="text" id="inputMarca" placeholder="Asus, Sony..." class="w-full bg-street-dark border border-zinc-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-red-500 transition">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[11px] text-gray-400 mb-1">Modelo</label>
+                            <input type="text" id="inputModelo" placeholder="ROG, PS5..." class="w-full bg-street-dark border border-zinc-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-red-500 transition">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-gray-400 mb-1">Núm. de Serie</label>
+                            <input type="text" id="inputSerie" placeholder="SN-12345" class="w-full bg-street-dark border border-zinc-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-red-500 transition">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] text-gray-400 mb-1">Accesorios Recibidos</label>
+                        <input type="text" id="inputAccesorios" placeholder="Cargador, Cables, Mochila..." class="w-full bg-street-dark border border-zinc-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-red-500 transition">
+                    </div>
+                </div>
+
+                <!-- Problem & Service Details -->
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-[11px] font-semibold text-gray-400 uppercase mb-1">Falla Reportada</label>
+                        <textarea id="inputFalla" rows="2" placeholder="Describa el problema reportado..." class="w-full bg-street-gray border border-zinc-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-red-500 transition"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold text-gray-400 uppercase mb-1">Servicios Realizados</label>
+                        <textarea id="inputServicios" rows="3" placeholder="Detalle la reparación o mantenimiento realizado..." class="w-full bg-street-gray border border-zinc-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-red-500 transition"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold text-gray-400 uppercase mb-1">Total ($ MXN)</label>
+                        <input type="number" id="inputTotal" min="0" step="0.01" placeholder="0.00" class="w-full bg-street-gray border border-zinc-700 rounded-lg p-2.5 text-sm text-white font-mono font-bold focus:outline-none focus:border-red-500 transition">
+                    </div>
+                </div>
+
+                <!-- Attachments section -->
+                <div class="bg-street-gray p-3 rounded-xl border border-zinc-800 space-y-2">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-red-400 flex items-center justify-between">
+                        <span><i class="fa-solid fa-camera"></i> Fotos del Equipo (Max 4, 5 MB c/u)</span>
+                        <span id="photoCount" class="text-[10px] text-gray-400">0/4</span>
+                    </label>
+                    <input type="file" id="imageUploader" accept="image/*" multiple class="hidden">
+                    <button type="button" id="uploadButton" class="w-full py-2.5 px-3 bg-zinc-800 hover:bg-zinc-700 border border-dashed border-zinc-600 rounded-lg text-xs text-gray-300 flex items-center justify-center gap-2 transition active:scale-98">
+                        <i class="fa-solid fa-upload"></i> Subir Imágenes
+                    </button>
+                    
+                    <!-- Thumbnails list -->
+                    <div id="thumbContainer" class="grid grid-cols-4 gap-2 pt-2"></div>
+                </div>
+
+            </form>
+        </section>
+
+        <!-- PREVIEW PANEL / PRINTABLE RECEIPT -->
+        <section id="receiptContainer" class="hidden lg:flex lg:col-span-7 justify-center items-start overflow-x-auto p-1">
+            <div id="receiptTicket" class="ticket-container bg-white text-black w-full max-w-[750px] p-6 md:p-8 rounded-xl shadow-2xl border-2 md:border-4 border-black font-sans leading-tight transition-all">
+                
+                <!-- HEADER WITH LOGOS FROM ASSETS -->
+                <div class="flex justify-between items-center pb-3 border-b-2 border-black gap-2">
+                    <!-- LOGO 1: Character/Mascot from assets/image/logo.png -->
+                    <div class="w-20 h-20 md:w-24 md:h-24 flex-shrink-0 flex items-center justify-center">
+                        <img src="assets/image/logo.png" alt="Logo AZUU" class="max-w-full max-h-full object-contain">
+                    </div>
+
+                    <!-- LOGO 2: AZUU Title Typography from assets/image/titulo.png -->
+                    <div class="flex-grow px-2 flex justify-center items-center h-20 md:h-24">
+                        <img src="assets/image/titulo.png" alt="AZUU Título" class="max-h-16 md:max-h-20 max-w-full object-contain">
+                    </div>
+
+                    <!-- DATE AND FOLIO -->
+                    <div class="text-right flex-shrink-0">
+                        <div class="text-xs md:text-sm font-bold tracking-tight">Fecha: <span id="viewFecha" class="border-b border-black inline-block px-1 font-mono">__/__/____</span></div>
+                        <div class="text-[11px] md:text-xs text-gray-800 font-mono mt-1">Folio: <span id="viewFolio" class="font-bold text-black">AZ-001</span></div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 py-1.5 border-b border-black text-[11px] md:text-xs">
+                    <p class="flex gap-1"><span class="font-semibold">Recepción:</span><span id="viewRecepcion" class="font-mono">__/__/____</span></p>
+                    <p class="flex gap-1"><span class="font-semibold">Entrega:</span><span id="viewEntrega" class="font-mono">Pendiente</span></p>
+                </div>
+
+                <!-- CLIENT DATA -->
+                <div class="py-2.5 border-b-2 border-black">
+                    <h3 class="font-black text-xs md:text-sm uppercase tracking-wide mb-1">DATOS DEL CLIENTE:</h3>
+                    <div class="space-y-1 text-xs md:text-sm">
+                        <p class="flex">
+                            <span class="font-semibold w-20 flex-shrink-0">Cliente:</span>
+                            <span id="viewCliente" class="border-b border-black border-dashed flex-grow font-mono font-medium min-h-[18px]"></span>
+                        </p>
+                        <p class="flex">
+                            <span class="font-semibold w-20 flex-shrink-0">Teléfono:</span>
+                            <span id="viewTelefono" class="border-b border-black border-dashed flex-grow font-mono font-medium min-h-[18px]"></span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- EQUIPMENT INFO -->
+                <div class="py-2.5 border-b-2 border-black">
+                    <h3 class="font-black text-xs md:text-sm uppercase tracking-wide mb-1">INFORMACIÓN DEL EQUIPO:</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-y-1 gap-x-4 text-xs md:text-sm mb-1">
+                        <p class="flex">
+                            <span class="font-semibold w-28 flex-shrink-0">Tipo de equipo:</span>
+                            <span id="viewTipo" class="border-b border-black border-dashed flex-grow font-mono min-h-[18px]"></span>
+                        </p>
+                        <p class="flex">
+                            <span class="font-semibold w-16 flex-shrink-0">Marca:</span>
+                            <span id="viewMarca" class="border-b border-black border-dashed flex-grow font-mono min-h-[18px]"></span>
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-y-1 gap-x-4 text-xs md:text-sm mb-1">
+                        <p class="flex">
+                            <span class="font-semibold w-28 flex-shrink-0">Modelo:</span>
+                            <span id="viewModelo" class="border-b border-black border-dashed flex-grow font-mono min-h-[18px]"></span>
+                        </p>
+                        <p class="flex">
+                            <span class="font-semibold w-28 flex-shrink-0">Número de serie:</span>
+                            <span id="viewSerie" class="border-b border-black border-dashed flex-grow font-mono min-h-[18px]"></span>
+                        </p>
+                    </div>
+
+                    <p class="flex text-xs md:text-sm mt-1">
+                        <span class="font-semibold w-36 flex-shrink-0">Accesorios recibidos:</span>
+                        <span id="viewAccesorios" class="border-b border-black border-dashed flex-grow font-mono min-h-[18px]"></span>
+                    </p>
+                </div>
+
+                <!-- REPORTED PROBLEM -->
+                <div class="py-2.5 border-b-2 border-black">
+                    <h3 class="font-black text-xs md:text-sm uppercase tracking-wide mb-1">FALLA REPORTADA:</h3>
+                    <div id="viewFalla" class="border-b border-black border-dashed font-mono text-xs md:text-sm min-h-[32px] whitespace-pre-wrap py-0.5"></div>
+                </div>
+
+                <!-- SERVICES PERFORMED -->
+                <div class="py-2.5 border-b-2 border-black">
+                    <h3 class="font-black text-xs md:text-sm uppercase tracking-wide mb-1">SERVICIOS REALIZADOS:</h3>
+                    <div id="viewServicios" class="border-b border-black border-dashed font-mono text-xs md:text-sm min-h-[48px] whitespace-pre-wrap py-0.5"></div>
+                </div>
+
+                <!-- STRICT 1-PAGE FIT PHOTO DISPLAY -->
+                <div id="photoDisplaySection" class="pt-2 border-b-2 border-black hidden">
+                    <h4 class="font-bold text-[11px] uppercase tracking-wide mb-1 text-gray-800">Evidencia Fotográfica:</h4>
+                    <div id="photoGrid" class="grid grid-cols-4 gap-2 mb-2"></div>
+                </div>
+
+                <!-- TOTAL & TERMS -->
+                <div class="pt-3 flex justify-between items-end gap-2">
+                    <div class="text-[10px] md:text-xs leading-tight text-gray-800 max-w-[60%] space-y-0.5">
+                        <p>* Garantía de 30 días sobre la falla reparada.</p>
+                        <p>* Equipos no reclamados tras 30 días pasarán a disposición del taller.</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-lg md:text-xl font-extrabold flex items-center justify-end gap-1.5">
+                            <span>Total:</span>
+                            <span id="viewTotal" class="border-b-2 border-black font-mono text-xl md:text-2xl min-w-[100px] inline-block text-right">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SIGNATURE LINES -->
+                <div class="mt-8 pt-2 grid grid-cols-2 gap-6 text-center text-[11px]">
+                    <div>
+                        <div class="border-t border-black w-4/5 mx-auto mb-0.5"></div>
+                        <p class="font-bold">Firma del Cliente</p>
+                    </div>
+                    <div>
+                        <div class="border-t border-black w-4/5 mx-auto mb-0.5"></div>
+                        <p class="font-bold">Recibido por AZUU</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+</body>
+</html>
